@@ -1,4 +1,4 @@
-# Домашнее задание выполнено для курса [Infrastructure as a code](https://otus.ru/lessons/infrastructure-as-a-code/?int_source=courses_catalog&int_term=operations)
+# Домашнее задание выполнено для курса [Infrastructure as a code](https://otus.ru/lessons/infrastructure-as-a-code/)
 
 00. Перед началом выполнения заданий, требуется доступ в Yandex Cloud. Создать новый каталог (заповнив его id + id облака)
 
