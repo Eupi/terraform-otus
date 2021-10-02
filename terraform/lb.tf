@@ -27,10 +27,9 @@ resource "yandex_lb_network_load_balancer" "wp_lb" {
     target_group_id = yandex_lb_target_group.wp_tg.id
 
     healthcheck {
-      name = "http"
-      http_options {
+      name = "tcp"
+      tcp_options {
         port = 80
-        path = "/health"
       }
     }
   }

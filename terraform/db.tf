@@ -1,35 +1,34 @@
 locals {
-  dbuser = tolist(yandex_mdb_postgresql_cluster.wp_postgresql.user.*.name)[0]
-  dbpassword = tolist(yandex_mdb_postgresql_cluster.wp_postgresql.user.*.password)[0]
-  dbhosts = yandex_mdb_postgresql_cluster.wp_postgresql.host.*.fqdn
-  dbname = tolist(yandex_mdb_postgresql_cluster.wp_postgresql.database.*.name)[0]
+  dbuser = tolist(yandex_mdb_mysql_cluster.wp_mysql.user.*.name)[0]
+  dbpassword = tolist(yandex_mdb_mysql_cluster.wp_mysql.user.*.password)[0]
+  dbhosts = yandex_mdb_mysql_cluster.wp_mysql.host.*.fqdn
+  dbname = tolist(yandex_mdb_mysql_cluster.wp_mysql.database.*.name)[0]
 }
 
-resource "yandex_mdb_postgresql_cluster" "wp_postgresql" {
-  name        = "wp-postgresql"
+resource "yandex_mdb_mysql_cluster" "wp_mysql" {
+  name        = "wp-mysql"
   folder_id   = var.yc_folder
   environment = "PRODUCTION"
   network_id  = yandex_vpc_network.wp-network.id
+  version     = "8.0"
 
-  config {
-    version = 12
-    resources {
-      resource_preset_id = "s2.small"
-      disk_type_id       = "network-ssd"
-      disk_size          = 64
-    }
+  resources {
+    resource_preset_id = "s2.micro"
+    disk_type_id       = "network-ssd"
+    disk_size          = 16
   }
 
   database {
     name  = "db"
-    owner = "user"
   }
 
   user {
     name     = "user"
     password = var.db_password
+    authentication_plugin = "MYSQL_NATIVE_PASSWORD"
     permission {
       database_name = "db"
+      roles         = ["ALL"]
     }
   }
 
