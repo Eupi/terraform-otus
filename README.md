@@ -83,3 +83,46 @@ terraform destroy --auto-approve
     ```bash
     ansible-playbook playbooks/install.yml
     ```
+
+
+### Тестирование инфраструктуры с помощью Go
+
+0. Тесты проводить в отедбном каталоге в YC. При его создании (например каталог `stage`) запомнить его id,  
+   т.к. он потребуется в дальнейшем при запуске тестов.
+
+1. [Установить](https://golang.org/doc/install) самую последнюю версию Go локально  
+2. Тесты в проекте включают в себя следующие пункты:
+   - проверка наличия IP Load balancer-а в state-е терраформа
+   - возможность подключиться по ssh к одной из виртуальных машин
+
+3. Тесты созданы в отдельной ветке `ansible`
+4. Тесты располагаются в каталоге `terrafotm/test/end2end_test.go`
+5. Перед запуском выполнить инициализацию модуля Go:
+  ```bash
+  go mod init test  
+  ```
+6. Все новые зависимости в блоке `import` необходимо подгружать командой:
+  ```bash
+  go mod vendor
+  ```
+7. Запуск тестов:
+  ```bash
+  go test -v ./ -timeout 30m -folder 'yc_folder_id'
+  ```
+8. Управление стадиями `SKIP_setup`, `SKIP_validate`, `SKIP_teardown` происходит через определение  
+  переменных окружений, например:
+  ```bash
+  export SKIP_validate=true
+  export SKIP_teardown=true
+  export SKIP_setup=true
+  ```
+  Чтобы вернуть необходимую стадию, выполнить, например:
+  ```bash
+  unset SKIP_validate
+  ```
+
+9. Пример команды запуска теста с проверкой возможности зайти по ssh:
+  ```bash
+  go test -v ./ -timeout 30m -folder 'yc_folder_id' -ssh-key-pass '/home/user/.ssh/id_rsa'
+  
+  ```
